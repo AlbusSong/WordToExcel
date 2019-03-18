@@ -38,3 +38,14 @@ function extractDataFromWordFile() {
 //     const fs = require('fs');
 //     return fs.readFileSync(file, 'utf8');
 // }
+
+
+
+// Useful electron links
+// https://www.jianshu.com/p/57d910008612
+// https://www.cnblogs.com/buzhiqianduan/p/7620099.html
+
+// Useful word excel data handling links
+// https://www.jb51.net/article/107802.htm
+// https://www.jb51.net/article/145571.htm
+// https://www.cnblogs.com/xiashan17/p/6214817.html
