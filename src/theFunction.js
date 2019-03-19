@@ -6,9 +6,9 @@ const path = require('path');
 function exportDataToExcel() {
     console.log("bbbbbbbbbbbbbbbb");
     let excel = new Excel(path.join(__dirname,'test.xlsx'))
-    excel.writeSheet('Sheet1', ['name','age','country'], [
+    excel.writeSheet('Sheet1', ['name','age','country\ncococo'], [
         {
-            name: 'Jane',
+            name: 'Jane\n\njjjjj',
             age: 19,
             country: 'China'
         },
@@ -103,3 +103,7 @@ function oldExtractDataFromWordFile() {
 // https://www.jb51.net/article/107802.htm
 // https://www.jb51.net/article/145571.htm
 // https://www.cnblogs.com/xiashan17/p/6214817.html
+// https://github.com/laoqiren/excel-class/blob/master/CN.md
+// https://cnodejs.org/topic/5846c5914c17b38d35436412
+// https://github.com/sail-sail/ejsExcel
+// https://www.jianshu.com/p/48dc84f391c0
