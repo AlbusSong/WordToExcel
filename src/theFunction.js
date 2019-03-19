@@ -1,5 +1,27 @@
 const fs = require("fs");
 var admZip = require('adm-zip');
+const Excel = require('excel-class');
+const path = require('path');
+
+function exportDataToExcel() {
+    console.log("bbbbbbbbbbbbbbbb");
+    let excel = new Excel(path.join(__dirname,'test.xlsx'))
+    excel.writeSheet('Sheet1', ['name','age','country'], [
+        {
+            name: 'Jane',
+            age: 19,
+            country: 'China'
+        },
+        {
+            name: 'Maria',
+            age: 20,
+            country: 'America'
+        }
+    ]).then(()=>{
+        //do other things
+        console.log("Exported");
+    });
+}
 
 function readText() {
     const content = fs.readFileSync(__dirname + "/a.txt", "utf8");
