@@ -2,6 +2,30 @@ const fs = require("fs");
 var admZip = require('adm-zip');
 const Excel = require('excel-class');
 const path = require('path');
+const electron = require("electron");
+const {dialog} = electron.remote;
+
+function importDocFile() {
+    var options = {
+        defaultPath: '~',
+        filters: [
+            { name: '', extensions: ['doc', 'docx', 'DOC', 'DOCX'] }
+          ],
+        properties: ['openFile']
+  }
+  dialog.showOpenDialog(options, (fileNames) => {
+    // fileNames is an array that contains all the selected
+    if(fileNames === undefined){
+        console.log("No file selected");
+        return;
+    } else {
+      console.log(fileNames[0]);
+    //   document.getElementById("message").innerHTML = "已选择文件：" + fileNames[0] + "<br><br>" + "正在导出数据请稍候...";
+    //   var filepath = fileNames[0];
+    }
+    // start_process(filepath);
+  });
+}
 
 function exportDataToExcel() {
     console.log("bbbbbbbbbbbbbbbb");
