@@ -6,6 +6,7 @@ const electron = require("electron");
 const {dialog} = electron.remote;
 
 let docFilePath;
+var resultList = [];
 
 function importDocFile() {
     var options = {
@@ -38,9 +39,7 @@ function extractDataFromWordFile(thePath) {
     let contentXml = zip.readAsText("word/document.xml");
     let str = "";
     let tmpStr = "";
-    const filePath = __dirname + "/2.txt";
-
-    var resultList = [];
+    const filePath = __dirname + "/2.txt";    
 
     //正则匹配出对应的<w:p>里面的内容,方法是先匹配<w:p>,再匹配里面的<w:t>,将匹配到的加起来即可
     //注意？表示非贪婪模式(尽可能少匹配字符)，否则只能匹配到一个<w:p></w:p>    
@@ -104,7 +103,7 @@ function exportExcel() {
     const options = {
         title: fileNameOfDocFile,
         filters: [
-          { name: "", extensions: ['xlsx'] }
+          { name: fileNameOfDocFile, extensions: ['xlsx'] }
         ],
         properties: ['openFile']
       }
@@ -119,21 +118,47 @@ function exportExcel() {
 function exportDataToExcel(excelPath) {
     console.log("bbbbbbbbbbbbbbbb");
     let excel = new Excel(excelPath)
-    excel.writeSheet('Sheet1', ['name','age','country\ncococo'], [
-        {
-            name: 'Jane\n\njjjjj',
-            age: 19,
-            country: 'China'
-        },
-        {
-            name: 'Maria',
-            age: 20,
-            country: 'America'
+    let excelTitles = [];
+    let excelContents = [];
+    
+    var theDict = {};
+    var tmpKey;
+    for (let i = 1; i < resultList.length; i++) {
+        if (i % 2 == 1) {
+            tmpKey = resultList[i];
+            excelTitles.push(tmpKey);
+        } else {
+            // let theKey = excelTitles[i/2];
+            var tmpV = resultList[i];
+            theDict[tmpKey] = tmpV;     
+            console.log("theDict: " + tmpKey + "\n" + tmpV + "\n");
+            // excelContents.push(tmpDict);
         }
-    ]).then(()=>{
+    }
+
+    console.log("excelTitles: " + excelTitles);
+    // console.log("excelContents: " + excelContents);
+
+    excel.writeSheet(resultList[0], excelTitles, [theDict]).then(()=>{
         //do other things
         console.log("Exported");
     });
+
+    // excel.writeSheet(resultList[0], ['name','age','countrydcococo'], [
+    //     {
+    //         name: 'Jane\n\njjjjj',
+    //         age: 19,
+    //         country: 'China'
+    //     },
+    //     {
+    //         name: 'Maria',
+    //         age: 20,
+    //         country: 'America'
+    //     }
+    // ]).then(()=>{
+    //     //do other things
+    //     console.log("Exported");
+    // });
 }
 
 function readText() {
