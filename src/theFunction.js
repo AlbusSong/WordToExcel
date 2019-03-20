@@ -1,9 +1,11 @@
 const fs = require("fs");
-var admZip = require('adm-zip');
+const admZip = require('adm-zip');
 const Excel = require('excel-class');
 const path = require('path');
 const electron = require("electron");
 const {dialog} = electron.remote;
+
+let docFilePath;
 
 function importDocFile() {
     var options = {
@@ -12,49 +14,27 @@ function importDocFile() {
             { name: '', extensions: ['doc', 'docx', 'DOC', 'DOCX'] }
           ],
         properties: ['openFile']
-  }
-  dialog.showOpenDialog(options, (fileNames) => {
-    // fileNames is an array that contains all the selected
-    if(fileNames === undefined){
-        console.log("No file selected");
-        return;
-    } else {
-      console.log(fileNames[0]);
-    //   document.getElementById("message").innerHTML = "已选择文件：" + fileNames[0] + "<br><br>" + "正在导出数据请稍候...";
-    //   var filepath = fileNames[0];
     }
-    // start_process(filepath);
-  });
-}
-
-function exportDataToExcel() {
-    console.log("bbbbbbbbbbbbbbbb");
-    let excel = new Excel(path.join(__dirname,'test.xlsx'))
-    excel.writeSheet('Sheet1', ['name','age','country\ncococo'], [
-        {
-            name: 'Jane\n\njjjjj',
-            age: 19,
-            country: 'China'
-        },
-        {
-            name: 'Maria',
-            age: 20,
-            country: 'America'
+    dialog.showOpenDialog(options, (fileNames) => {
+         // fileNames is an array that contains all the selected
+        if(fileNames === undefined){
+            console.log("No file selected");
+            return;
+        } else {
+            docFilePath = fileNames[0];
+            console.log("importDocFile: " + docFilePath);
+            extractDataFromWordFile(docFilePath);
+            //   document.getElementById("message").innerHTML = "已选择文件：" + fileNames[0] + "<br><br>" + "正在导出数据请稍候...";
+            //   var filepath = fileNames[0];
+            }
+            // start_process(filepath);
         }
-    ]).then(()=>{
-        //do other things
-        console.log("Exported");
-    });
+    );
 }
 
-function readText() {
-    const content = fs.readFileSync(__dirname + "/a.txt", "utf8");
-    console.log("the Content: " + content);  
-}
-
-function extractDataFromWordFile() {
+function extractDataFromWordFile(thePath) {
     console.log('aaaaaaaaadsdddd');
-    const zip = new admZip(__dirname + '/test.docx');
+    const zip = new admZip(thePath);
     let contentXml = zip.readAsText("word/document.xml");
     let str = "";
     let tmpStr = "";
@@ -115,6 +95,50 @@ function oldExtractDataFromWordFile() {
             throw error; 
         }
     });
+}
+
+function exportExcel() {
+    let fileNameIndex = docFilePath.lastIndexOf("/") + 1;
+    let fileNameOfDocFile = docFilePath.substr(fileNameIndex);
+    console.log("fileNameOfDocFile: " + fileNameOfDocFile);
+    const options = {
+        title: fileNameOfDocFile,
+        filters: [
+          { name: "", extensions: ['xlsx'] }
+        ],
+        properties: ['openFile']
+      }
+      dialog.showSaveDialog(options, function (filename) {
+        // event.sender.send('saved-file', filename)
+        console.log(filename);
+        exportDataToExcel(filename);
+      })
+}
+
+
+function exportDataToExcel(excelPath) {
+    console.log("bbbbbbbbbbbbbbbb");
+    let excel = new Excel(excelPath)
+    excel.writeSheet('Sheet1', ['name','age','country\ncococo'], [
+        {
+            name: 'Jane\n\njjjjj',
+            age: 19,
+            country: 'China'
+        },
+        {
+            name: 'Maria',
+            age: 20,
+            country: 'America'
+        }
+    ]).then(()=>{
+        //do other things
+        console.log("Exported");
+    });
+}
+
+function readText() {
+    const content = fs.readFileSync(__dirname + "/a.txt", "utf8");
+    console.log("the Content: " + content);  
 }
 
 
