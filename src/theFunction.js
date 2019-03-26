@@ -4,9 +4,87 @@ const Excel = require('excel-class');
 const path = require('path');
 const electron = require("electron");
 const {dialog} = electron.remote;
+// var contensHandler = require("HandleContents");
 
 let docFilePath;
 var resultList = [];
+
+var tableTitle;
+var indexOfTableTitle = 0;
+function processRawData(rawData) {
+    if (rawData.length == 0) {
+        return [];
+    }
+
+    tableTitle = rawData[0];
+    console.log("tableTitle: " + tableTitle);
+
+    var groupedData = [];
+    while (indexOfTableTitle >= 0) {        
+        let nextIndexOfTableTitle = rawData.indexOf(tableTitle, indexOfTableTitle+1);
+        console.log("nextIndexOfTableTitle: ", nextIndexOfTableTitle);                
+        let group = [];
+        for (let i = indexOfTableTitle; i < (nextIndexOfTableTitle > indexOfTableTitle ? nextIndexOfTableTitle : rawData.length); i++) {
+            let item = rawData[i];
+            // console.log();
+            group.push(item);
+        }
+        console.log("theGroup: \n", group);
+
+        let arrangedKeysAndValues = arrangeTableKeysAndValues(group);
+        console.log("arrangedKeysAndValues: \n", arrangedKeysAndValues);
+        
+        if (nextIndexOfTableTitle >= 0) {
+            indexOfTableTitle = nextIndexOfTableTitle;
+        } else {
+            break;
+        }        
+    }    
+}
+
+var tableKeys = ["工单编号", "来电时间", "热线号码", "受理单位", "来电人", "来电号码", "联系方式", "来电人地址", "问题分类", "工单分类", "发生地址", "被反映单位", "标题", "主要内容", "派单人员", "派单时间", "处理意见", "截止时间", "处理时限", "承办单位", "处理情况"];
+function arrangeTableKeysAndValues (flattedGroup) {
+    var rst = [];
+    if (flattedGroup.length == 0) {
+        return rst;
+    }
+
+    let tableValues = [];
+    for (let i = 0; i < tableKeys.length - 1; i++) {
+        let currentKey = tableKeys[i];
+        let nextKey = tableKeys[i+1];        
+
+        let currentKeyIndex = flattedGroup.indexOf(currentKey);
+        let nextKeyIndex = flattedGroup.indexOf(nextKey);
+
+        console.log("currentKey: ", currentKey, "   ", currentKeyIndex);
+
+        if (currentKeyIndex + 2 == nextKeyIndex) {
+            tableValues.push(flattedGroup[currentKeyIndex+1]);
+        } else {
+            tableValues.push("EMPTY");
+        }
+
+        // 如果是最后两个key
+        // if (i == tableKeys.length - 2) {
+        //     if (flattedGroup.length > (tableKeys.length - 1)) {
+        //         tableValues.push(flattedGroup[nextKeyIndex+1]);
+        //     } else {
+
+        //     }
+        // }
+
+        // if (currentKeyIndex < 0 || nextKeyIndex < 0) {
+        //     tableValues.push("EMPTY");
+        //     continue;
+        // }        
+    }
+
+    console.log("tableValues: ", tableValues);
+
+    rst.push(tableKeys);
+    rst.push(tableValues);
+}
 
 function importDocFile() {
     var options = {
@@ -70,6 +148,8 @@ function extractDataFromWordFile(thePath) {
         });
     }
     console.log(resultList);
+    // contensHandler.handleContents();
+    processRawData(resultList);
 }
 
 function oldExtractDataFromWordFile() {
