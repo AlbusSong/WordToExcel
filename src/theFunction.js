@@ -32,7 +32,7 @@ function processRawData(rawData) {
         console.log("theGroup: \n", group);
 
         let arrangedKeysAndValues = arrangeTableKeysAndValues(group);
-        console.log("arrangedKeysAndValues: \n", arrangedKeysAndValues);
+        // console.log("arrangedKeysAndValues: \n", arrangedKeysAndValues);
         
         if (nextIndexOfTableTitle >= 0) {
             indexOfTableTitle = nextIndexOfTableTitle;
@@ -54,16 +54,27 @@ function arrangeTableKeysAndValues (flattedGroup) {
         let currentKey = tableKeys[i];
         let nextKey = tableKeys[i+1];        
 
-        let currentKeyIndex = flattedGroup.indexOf(currentKey);
-        let nextKeyIndex = flattedGroup.indexOf(nextKey);
+        // let currentKeyIndex = flattedGroup.indexOf(currentKey);
+        let currentKeyIndex = flattedGroup.findIndex(function(value, index, arr) {
+            return (value.indexOf(currentKey) > -1);
+        });
+        let nextKeyIndex = flattedGroup.findIndex(function(value, index, arr) {
+            return (value.indexOf(nextKey) > -1);
+        });
 
         console.log("currentKey: ", currentKey, "   ", currentKeyIndex);
 
-        if (currentKeyIndex + 2 == nextKeyIndex) {
-            tableValues.push(flattedGroup[currentKeyIndex+1]);
+        if (i == 13) {
+            // 如果是“主要内容”，要单独处理
+            let mainInfoString = flattedGroup[currentKeyIndex];
+            tableValues.push(mainInfoString.substring(5));
         } else {
-            tableValues.push("EMPTY");
-        }
+            if (currentKeyIndex + 2 == nextKeyIndex) {
+                tableValues.push(flattedGroup[currentKeyIndex+1]);
+            } else {
+                tableValues.push("EMPTY");
+            }
+        }        
 
         // 如果是最后两个key
         // if (i == tableKeys.length - 2) {
@@ -84,6 +95,8 @@ function arrangeTableKeysAndValues (flattedGroup) {
 
     rst.push(tableKeys);
     rst.push(tableValues);
+
+    return rst;
 }
 
 function importDocFile() {
