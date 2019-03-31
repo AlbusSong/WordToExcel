@@ -104,7 +104,7 @@ function arrangeTableKeysAndValues (flattedGroup) {
 // var tableKeys = ["工单编号0", "来电时间1", "热线号码2", "受理单位3", "来电人4", "来电号码5", "联系方式6", "来电人地址7", "问题分类8", "工单分类9", "发生地址10", "被反映单位11", "标题12", "主要内容13", "派单人员14", "派单时间15", "处理意见16", "截止时间17", "处理时限18", "承办单位19", "处理情况20"];
 var excelTitles = ["外网编号", "业务类别", "登记时间", "姓名", "问题发生地省", "问题发生地市", "问题发生地区县", "联系电话 注：咨询账号（注册手机号码）", "纳税人识别号", "外网坐席", "二级分类", "反映内容", "被举报人姓名/被投诉单位或个人/被检举人姓名", "被举报人所属单位/被检举人住所", "是否保密", "紧急程度", "流转方向", "接收人"];
 function generateFormattedDictBy(tValues) {
-    // console.log("tValues: \n", tValues);
+    console.log("tValues: \n", tValues);
     var theDict = {};
 
     let outerNetworkNumber;
@@ -152,7 +152,7 @@ function generateFormattedDictBy(tValues) {
             feedbackContent += "\n主要内容：";
             feedbackContent += tValues[12];
             feedbackContent += "\n反映内容：";
-            feedbackContent += feedbackContent[13];
+            feedbackContent += tValues[13];
 
             theDict[key] = feedbackContent;
         } else if (i == 12) {
