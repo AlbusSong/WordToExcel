@@ -101,23 +101,93 @@ function arrangeTableKeysAndValues (flattedGroup) {
     return tableValues;
 }
 
-// var tableKeys = ["工单编号", "来电时间", "热线号码", "受理单位", "来电人", "来电号码", "联系方式", "来电人地址", "问题分类", "工单分类", "发生地址", "被反映单位", "标题", "主要内容", "派单人员", "派单时间", "处理意见", "截止时间", "处理时限", "承办单位", "处理情况"];
+// var tableKeys = ["工单编号0", "来电时间1", "热线号码2", "受理单位3", "来电人4", "来电号码5", "联系方式6", "来电人地址7", "问题分类8", "工单分类9", "发生地址10", "被反映单位11", "标题12", "主要内容13", "派单人员14", "派单时间15", "处理意见16", "截止时间17", "处理时限18", "承办单位19", "处理情况20"];
+var excelTitles = ["外网编号", "业务类别", "登记时间", "姓名", "问题发生地省", "问题发生地市", "问题发生地区县", "联系电话 注：咨询账号（注册手机号码）", "纳税人识别号", "外网坐席", "二级分类", "反映内容", "被举报人姓名/被投诉单位或个人/被检举人姓名", "被举报人所属单位/被检举人住所", "是否保密", "紧急程度", "流转方向", "接收人"];
 function generateFormattedDictBy(tValues) {
     // console.log("tValues: \n", tValues);
     var theDict = {};
-    for (let i = 0; i < tableKeys.length; i++) {
-        let key = tableKeys[i];
-        let value = tValues[i];
-        let formattedValue;
-        // 某些字段作出特殊处理
+
+    for (let i = 0; i < excelTitles.length; i++) {
+        let key = excelTitles[i];
         if (i == 0) {
-            // 工单编号
+            // 外网编号
+            let value = tValues[0];
             let year = value.substr(2, 4);
             let tradeNumber = value.substring(9);
-            formattedValue = year + tradeNumber;
+            theDict[key] = year + tradeNumber;
+        } else if (i == 1) {
+            // 业务类别
+            theDict[key] = "0305";
+        } else if (i == 2) {
+            // 登记时间
+            theDict[key] = tValues[15];
+        } else if (i == 3) {
+            // 姓名
+            theDict[key] = tValues[4];
+        } else if (i <= 6) {
+            // 问题发生地省、市、县
+            theDict[key] = " ";
+        } else if (i == 7) {
+            // 联系电话 注：咨询账号（注册手机号码）
+            theDict[key] = tValues[5];
+        } else if (i == 8) {
+            // 纳税人识别号
+            theDict[key] = " ";
+        } else if (i == 9) {
+            // 外网坐席
+            theDict[key] = tValues[14];
+        } else if (i == 10) {
+            // 二级分类
+            theDict[key] = "11";
+        } else if (i == 11) {
+            // 反映内容
+            let feedbackContent = "外网编号：";
+            feedbackContent += tValues[0];
+            feedbackContent += "\n来点人姓名：";
+            feedbackContent += tValues[4];
+            feedbackContent += "\n联系电话：";
+            feedbackContent += tValues[5];
+            feedbackContent += "\n主要内容：";
+            feedbackContent += tValues[12];
+            feedbackContent += "\n反映内容：";
+            feedbackContent += feedbackContent[13];
+
+            theDict[key] = feedbackContent;
+        } else if (i == 12) {
+            // 被举报人姓名/被投诉单位或个人/被检举人姓名
+            theDict[key] = "见举报内容";
+        } else if (i == 13) {
+            // 被举报人所属单位/被检举人住所
+            theDict[key] = "见举报内容";
+        } else if (i == 14) {
+            // 是否保密
+            theDict[key] = "待定";
+        } else if (i == 15) {
+            // 紧急程度
+            theDict[key] = " ";
+        } else if (i == 16) {
+            // 流转方向
+            theDict[key] = "12345工单";
+        } else if (i == 17) {
+            // 接收人
+            theDict[key] = " ";
         }
-        theDict[key] = formattedValue ? formattedValue : value;
     }
+
+    // for (let i = 0; i < tableKeys.length; i++) {
+    //     let key = tableKeys[i];
+    //     let value = tValues[i];
+    //     let formattedValue;
+    //     // 某些字段作出特殊处理
+    //     if (i == 0) {
+    //         // 工单编号
+    //         let year = value.substr(2, 4);
+    //         let tradeNumber = value.substring(9);
+    //         formattedValue = year + tradeNumber;
+    //         theDict["外网编号"] = formattedValue;
+    //     }
+    //     // theDict[key] = formattedValue ? formattedValue : value;
+    // }
 
     console.log("generateFormattedDictBy: \n", theDict);
     return theDict;
@@ -134,7 +204,7 @@ function exportDataToExcel(excelPath) {
         excelContents.push(dict);
     }
 
-    excel.writeSheet(tableTitle, tableKeys, excelContents).then(()=>{
+    excel.writeSheet(tableTitle, excelTitles, excelContents).then(()=>{
         //do other things
         console.log("Exported");
     });
