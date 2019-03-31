@@ -75,7 +75,7 @@ function arrangeTableKeysAndValues (flattedGroup) {
             if (currentKeyIndex + 2 == nextKeyIndex) {
                 tableValues.push(flattedGroup[currentKeyIndex+1]);
             } else {
-                tableValues.push("EMPTY");
+                tableValues.push(" ");
             }
         }        
 
@@ -107,6 +107,7 @@ function generateFormattedDictBy(tValues) {
     // console.log("tValues: \n", tValues);
     var theDict = {};
 
+    let outerNetworkNumber;
     for (let i = 0; i < excelTitles.length; i++) {
         let key = excelTitles[i];
         if (i == 0) {
@@ -114,7 +115,8 @@ function generateFormattedDictBy(tValues) {
             let value = tValues[0];
             let year = value.substr(2, 4);
             let tradeNumber = value.substring(9);
-            theDict[key] = year + tradeNumber;
+            outerNetworkNumber = year + tradeNumber;
+            theDict[key] = outerNetworkNumber;
         } else if (i == 1) {
             // 业务类别
             theDict[key] = "0305";
@@ -142,7 +144,7 @@ function generateFormattedDictBy(tValues) {
         } else if (i == 11) {
             // 反映内容
             let feedbackContent = "外网编号：";
-            feedbackContent += tValues[0];
+            feedbackContent += outerNetworkNumber ? outerNetworkNumber : tValues[0];
             feedbackContent += "\n来点人姓名：";
             feedbackContent += tValues[4];
             feedbackContent += "\n联系电话：";
