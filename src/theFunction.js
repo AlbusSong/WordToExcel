@@ -33,7 +33,8 @@ function processRawData(rawData) {
 
         let arrangedKeysAndValues = arrangeTableKeysAndValues(group);
         // console.log("arrangedKeysAndValues: \n", arrangedKeysAndValues);
-        
+        resultList.push(arrangeTableKeysAndValues);
+
         if (nextIndexOfTableTitle >= 0) {
             indexOfTableTitle = nextIndexOfTableTitle;
         } else {
@@ -207,10 +208,10 @@ function exportExcel() {
       })
 }
 
-
+// 导出excel文件的核心函数
 function exportDataToExcel(excelPath) {
     console.log("bbbbbbbbbbbbbbbb");
-    let excel = new Excel(excelPath)
+    let excel = new Excel(excelPath);
     let excelTitles = [];
     let excelContents = [];
     
