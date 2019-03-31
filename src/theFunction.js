@@ -101,13 +101,22 @@ function arrangeTableKeysAndValues (flattedGroup) {
     return tableValues;
 }
 
+// var tableKeys = ["工单编号", "来电时间", "热线号码", "受理单位", "来电人", "来电号码", "联系方式", "来电人地址", "问题分类", "工单分类", "发生地址", "被反映单位", "标题", "主要内容", "派单人员", "派单时间", "处理意见", "截止时间", "处理时限", "承办单位", "处理情况"];
 function generateFormattedDictBy(tValues) {
     // console.log("tValues: \n", tValues);
     var theDict = {};
     for (let i = 0; i < tableKeys.length; i++) {
         let key = tableKeys[i];
         let value = tValues[i];
-        theDict[key] = value;
+        let formattedValue;
+        // 某些字段作出特殊处理
+        if (i == 0) {
+            // 工单编号
+            let year = value.substr(2, 4);
+            let tradeNumber = value.substring(9);
+            formattedValue = year + tradeNumber;
+        }
+        theDict[key] = formattedValue ? formattedValue : value;
     }
 
     console.log("generateFormattedDictBy: \n", theDict);
