@@ -8,7 +8,7 @@ const {dialog} = electron.remote;
 
 let docFilePath;
 var resultList = [];
-
+var tableValuesList = [];
 var tableTitle;
 var indexOfTableTitle = 0;
 function processRawData(rawData) {
@@ -22,25 +22,27 @@ function processRawData(rawData) {
     var groupedData = [];
     while (indexOfTableTitle >= 0) {        
         let nextIndexOfTableTitle = rawData.indexOf(tableTitle, indexOfTableTitle+1);
-        console.log("nextIndexOfTableTitle: ", nextIndexOfTableTitle);                
+        // console.log("nextIndexOfTableTitle: ", nextIndexOfTableTitle);                
         let group = [];
         for (let i = indexOfTableTitle; i < (nextIndexOfTableTitle > indexOfTableTitle ? nextIndexOfTableTitle : rawData.length); i++) {
             let item = rawData[i];
             // console.log();
             group.push(item);
         }
-        console.log("theGroup: \n", group);
+        // console.log("theGroup: \n", group);
 
         let arrangedKeysAndValues = arrangeTableKeysAndValues(group);
         // console.log("arrangedKeysAndValues: \n", arrangedKeysAndValues);
-        resultList.push(arrangeTableKeysAndValues);
+        tableValuesList.push(arrangedKeysAndValues);
 
         if (nextIndexOfTableTitle >= 0) {
             indexOfTableTitle = nextIndexOfTableTitle;
         } else {
             break;
         }        
-    }    
+    }
+
+    // console.log("resultList: \n", resultList);
 }
 
 var tableKeys = ["工单编号", "来电时间", "热线号码", "受理单位", "来电人", "来电号码", "联系方式", "来电人地址", "问题分类", "工单分类", "发生地址", "被反映单位", "标题", "主要内容", "派单人员", "派单时间", "处理意见", "截止时间", "处理时限", "承办单位", "处理情况"];
@@ -63,7 +65,7 @@ function arrangeTableKeysAndValues (flattedGroup) {
             return (value.indexOf(nextKey) > -1);
         });
 
-        console.log("currentKey: ", currentKey, "   ", currentKeyIndex);
+        // console.log("currentKey: ", currentKey, "   ", currentKeyIndex);
 
         if (i == 13) {
             // 如果是“主要内容”，要单独处理
@@ -92,37 +94,57 @@ function arrangeTableKeysAndValues (flattedGroup) {
         // }        
     }
 
-    console.log("tableValues: ", tableValues);
+    // console.log("tableValues: ", tableValues);
+    // rst.push(tableKeys);
+    // rst.push(tableValues);
 
-    rst.push(tableKeys);
-    rst.push(tableValues);
-
-    return rst;
+    return tableValues;
 }
 
-function importDocFile() {
-    var options = {
-        defaultPath: '~',
-        filters: [
-            { name: '', extensions: ['doc', 'docx', 'DOC', 'DOCX'] }
-          ],
-        properties: ['openFile']
+function generateFormattedDictBy(tValues) {
+    // console.log("tValues: \n", tValues);
+    var theDict = {};
+    for (let i = 0; i < tableKeys.length; i++) {
+        let key = tableKeys[i];
+        let value = tValues[i];
+        theDict[key] = value;
     }
-    dialog.showOpenDialog(options, (fileNames) => {
-         // fileNames is an array that contains all the selected
-        if(fileNames === undefined){
-            console.log("No file selected");
-            return;
-        } else {
-            docFilePath = fileNames[0];
-            console.log("importDocFile: " + docFilePath);
-            extractDataFromWordFile(docFilePath);
-            //   document.getElementById("message").innerHTML = "已选择文件：" + fileNames[0] + "<br><br>" + "正在导出数据请稍候...";
-            //   var filepath = fileNames[0];
-            }
-            // start_process(filepath);
-        }
-    );
+
+    console.log("generateFormattedDictBy: \n", theDict);
+    return theDict;
+}
+
+// 导出excel文件的核心函数
+function exportDataToExcel(excelPath) {
+    console.log("bbbbbbbbbbbbbbbb");
+    let excel = new Excel(excelPath);
+    let excelContents = [];
+
+    for (let i = 0; i < tableValuesList.length; i++) {
+        let dict = generateFormattedDictBy(tableValuesList[i]);
+        excelContents.push(dict);
+    }
+
+    excel.writeSheet(tableTitle, tableKeys, excelContents).then(()=>{
+        //do other things
+        console.log("Exported");
+    });
+
+    // excel.writeSheet(resultList[0], ['name','age','countrydcococo'], [
+    //     {
+    //         name: 'Jane\n\njjjjj',
+    //         age: 19,
+    //         country: 'China'
+    //     },
+    //     {
+    //         name: 'Maria',
+    //         age: 20,
+    //         country: 'America'
+    //     }
+    // ]).then(()=>{
+    //     //do other things
+    //     console.log("Exported");
+    // });
 }
 
 function extractDataFromWordFile(thePath) {
@@ -190,6 +212,31 @@ function oldExtractDataFromWordFile() {
     });
 }
 
+function importDocFile() {
+    var options = {
+        defaultPath: '~',
+        filters: [
+            { name: '', extensions: ['doc', 'docx', 'DOC', 'DOCX'] }
+          ],
+        properties: ['openFile']
+    }
+    dialog.showOpenDialog(options, (fileNames) => {
+         // fileNames is an array that contains all the selected
+        if(fileNames === undefined){
+            console.log("No file selected");
+            return;
+        } else {
+            docFilePath = fileNames[0];
+            console.log("importDocFile: " + docFilePath);
+            extractDataFromWordFile(docFilePath);
+            //   document.getElementById("message").innerHTML = "已选择文件：" + fileNames[0] + "<br><br>" + "正在导出数据请稍候...";
+            //   var filepath = fileNames[0];
+            }
+            // start_process(filepath);
+        }
+    );
+}
+
 function exportExcel() {
     let fileNameIndex = docFilePath.lastIndexOf("/") + 1;
     let fileNameOfDocFile = docFilePath.substr(fileNameIndex);
@@ -206,53 +253,6 @@ function exportExcel() {
         console.log(filename);
         exportDataToExcel(filename);
       })
-}
-
-// 导出excel文件的核心函数
-function exportDataToExcel(excelPath) {
-    console.log("bbbbbbbbbbbbbbbb");
-    let excel = new Excel(excelPath);
-    let excelTitles = [];
-    let excelContents = [];
-    
-    var theDict = {};
-    var tmpKey;
-    for (let i = 1; i < resultList.length; i++) {
-        if (i % 2 == 1) {
-            tmpKey = resultList[i];
-            excelTitles.push(tmpKey);
-        } else {
-            // let theKey = excelTitles[i/2];
-            var tmpV = resultList[i];
-            theDict[tmpKey] = tmpV;     
-            console.log("theDict: " + tmpKey + "\n" + tmpV + "\n");
-            // excelContents.push(tmpDict);
-        }
-    }
-
-    console.log("excelTitles: " + excelTitles);
-    // console.log("excelContents: " + excelContents);
-
-    excel.writeSheet(resultList[0], excelTitles, [theDict]).then(()=>{
-        //do other things
-        console.log("Exported");
-    });
-
-    // excel.writeSheet(resultList[0], ['name','age','countrydcococo'], [
-    //     {
-    //         name: 'Jane\n\njjjjj',
-    //         age: 19,
-    //         country: 'China'
-    //     },
-    //     {
-    //         name: 'Maria',
-    //         age: 20,
-    //         country: 'America'
-    //     }
-    // ]).then(()=>{
-    //     //do other things
-    //     console.log("Exported");
-    // });
 }
 
 function readText() {
