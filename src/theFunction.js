@@ -209,6 +209,11 @@ function exportDataToExcel(excelPath) {
     excel.writeSheet(tableTitle, excelTitles, excelContents).then(()=>{
         //do other things
         console.log("Exported");
+        docFilePath = "";
+        tableTitle = "";
+        indexOfTableTitle = 0;
+        resultList = [];
+        tableValuesList = [];
     });
 
     // excel.writeSheet(resultList[0], ['name','age','countrydcococo'], [
