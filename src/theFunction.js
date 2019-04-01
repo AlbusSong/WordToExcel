@@ -196,8 +196,7 @@ function generateFormattedDictBy(tValues) {
 }
 
 // 导出excel文件的核心函数
-function exportDataToExcel(excelPath) {
-    console.log("bbbbbbbbbbbbbbbb");
+function exportDataToExcel(excelPath) {    
     let excel = new Excel(excelPath);
     let excelContents = [];
 
@@ -209,11 +208,17 @@ function exportDataToExcel(excelPath) {
     excel.writeSheet(tableTitle, excelTitles, excelContents).then(()=>{
         //do other things
         console.log("Exported");
+        // tail work
         docFilePath = "";
         tableTitle = "";
         indexOfTableTitle = 0;
         resultList = [];
         tableValuesList = [];
+
+        dialog.showMessageBox({
+            title :'导出成功', type :'info', message : '导出成功'
+          });
+        return;
     });
 
     // excel.writeSheet(resultList[0], ['name','age','countrydcococo'], [
@@ -324,6 +329,13 @@ function importDocFile() {
 }
 
 function exportExcel() {
+    if (tableValuesList.length == 0) {
+        dialog.showMessageBox({
+            title :'请先导入docx文件', type :'info', message : '请先导入docx文件'
+          });
+        return;
+    }
+
     let fileNameIndex = docFilePath.lastIndexOf("/") + 1;
     let fileNameOfDocFile = docFilePath.substr(fileNameIndex);
     console.log("fileNameOfDocFile: " + fileNameOfDocFile);
