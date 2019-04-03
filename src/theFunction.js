@@ -107,7 +107,6 @@ function generateFormattedDictBy(tValues) {
     console.log("tValues: \n", tValues);
     var theDict = {};
 
-    let outerNetworkNumber;
     for (let i = 0; i < excelTitles.length; i++) {
         let key = excelTitles[i];
         if (i == 0) {
@@ -115,7 +114,7 @@ function generateFormattedDictBy(tValues) {
             let value = tValues[0];
             let year = value.substr(2, 4);
             let tradeNumber = value.substring(9);
-            outerNetworkNumber = year + tradeNumber;
+            let outerNetworkNumber = year + tradeNumber;
             theDict[key] = outerNetworkNumber;
         } else if (i == 1) {
             // 业务类别
@@ -144,7 +143,7 @@ function generateFormattedDictBy(tValues) {
         } else if (i == 11) {
             // 反映内容
             let feedbackContent = "外网编号：";
-            feedbackContent += outerNetworkNumber ? outerNetworkNumber : tValues[0];
+            feedbackContent += tValues[0];
             feedbackContent += "\n来点人姓名：";
             feedbackContent += tValues[4];
             feedbackContent += "\n联系电话：";
@@ -175,21 +174,6 @@ function generateFormattedDictBy(tValues) {
             theDict[key] = " ";
         }
     }
-
-    // for (let i = 0; i < tableKeys.length; i++) {
-    //     let key = tableKeys[i];
-    //     let value = tValues[i];
-    //     let formattedValue;
-    //     // 某些字段作出特殊处理
-    //     if (i == 0) {
-    //         // 工单编号
-    //         let year = value.substr(2, 4);
-    //         let tradeNumber = value.substring(9);
-    //         formattedValue = year + tradeNumber;
-    //         theDict["外网编号"] = formattedValue;
-    //     }
-    //     // theDict[key] = formattedValue ? formattedValue : value;
-    // }
 
     console.log("generateFormattedDictBy: \n", theDict);
     return theDict;
