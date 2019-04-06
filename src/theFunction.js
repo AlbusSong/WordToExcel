@@ -127,13 +127,13 @@ function generateFormattedDictBy(tValues) {
             theDict[key] = tValues[4];
         } else if (i <= 6) {
             // 问题发生地省、市、县
-            theDict[key] = " ";
+            theDict[key] = "";
         } else if (i == 7) {
             // 联系电话 注：咨询账号（注册手机号码）
             theDict[key] = tValues[5];
         } else if (i == 8) {
             // 纳税人识别号
-            theDict[key] = " ";
+            theDict[key] = "";
         } else if (i == 9) {
             // 外网坐席
             theDict[key] = tValues[14];
@@ -165,13 +165,13 @@ function generateFormattedDictBy(tValues) {
             theDict[key] = "待定";
         } else if (i == 15) {
             // 紧急程度
-            theDict[key] = " ";
+            theDict[key] = "";
         } else if (i == 16) {
             // 流转方向
             theDict[key] = "12345工单";
         } else if (i == 17) {
             // 接收人
-            theDict[key] = " ";
+            theDict[key] = "";
         }
     }
 
@@ -291,7 +291,7 @@ function importDocFile() {
     var options = {
         defaultPath: '~',
         filters: [
-            { name: '', extensions: ['doc', 'docx', 'DOC', 'DOCX'] }
+            { name: '', extensions: ['docx', 'DOCX'] }
           ],
         properties: ['openFile']
     }
