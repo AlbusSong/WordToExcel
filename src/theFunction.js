@@ -162,7 +162,7 @@ function generateFormattedDictBy(tValues) {
             theDict[key] = "见举报内容";
         } else if (i == 14) {
             // 是否保密
-            theDict[key] = "待定";
+            theDict[key] = "";
         } else if (i == 15) {
             // 紧急程度
             theDict[key] = "";
