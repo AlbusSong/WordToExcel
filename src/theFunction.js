@@ -17,12 +17,17 @@ function processRawData(rawData) {
     }
 
     tableTitle = rawData[0];
+    tableTitle = tableTitle.trim();
     console.log("tableTitle: " + tableTitle);
 
     var groupedData = [];
     while (indexOfTableTitle >= 0) {        
-        let nextIndexOfTableTitle = rawData.indexOf(tableTitle, indexOfTableTitle+1);
-        // console.log("nextIndexOfTableTitle: ", nextIndexOfTableTitle);                
+        // let nextIndexOfTableTitle = rawData.indexOf(tableTitle, indexOfTableTitle+1);
+        let nextIndexOfTableTitle = rawData.findIndex(function(value, index, arr) {
+            return (index > indexOfTableTitle) && (value.indexOf(tableTitle) > -1);
+        });
+        console.log("nextIndexOfTableTitle: ", nextIndexOfTableTitle);                
+
         let group = [];
         for (let i = indexOfTableTitle; i < (nextIndexOfTableTitle > indexOfTableTitle ? nextIndexOfTableTitle : rawData.length); i++) {
             let item = rawData[i];
@@ -52,7 +57,7 @@ function arrangeTableKeysAndValues (flattedGroup) {
         return rst;
     }
 
-    let tableValues = [];
+    let tableValues = [];    
     for (let i = 0; i < tableKeys.length - 1; i++) {
         let currentKey = tableKeys[i];
         let nextKey = tableKeys[i+1];        
@@ -93,6 +98,8 @@ function arrangeTableKeysAndValues (flattedGroup) {
         //     continue;
         // }        
     }
+
+    console.log("tableValues seg: " + tableValues);
 
     // console.log("tableValues: ", tableValues);
     // rst.push(tableKeys);
